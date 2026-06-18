@@ -1,15 +1,44 @@
+function simpanApi() {
+    const apiKey = document.getElementById("apikey").value;
+    localStorage.setItem("microstock_api_key", apiKey);
+    alert("API Key berhasil disimpan");
+}
+
+window.onload = () => {
+    const key = localStorage.getItem("microstock_api_key");
+    if (key) {
+        document.getElementById("apikey").value = key;
+    }
+};
+
+function fileToBase64(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+
+        reader.onload = () => {
+            resolve(reader.result.split(",")[1]);
+        };
+
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+    });
+}
+
 async function generateMetadata() {
 
+    const provider =
+        document.getElementById("provider").value;
+
     const apiKey =
-    document.getElementById("apikey").value;
+        document.getElementById("apikey").value;
 
     if (!apiKey) {
-        alert("Masukkan API Key Gemini");
+        alert("Masukkan API Key");
         return;
     }
 
     const files =
-    document.getElementById("imageUpload").files;
+        document.getElementById("imageUpload").files;
 
     if (files.length === 0) {
         alert("Upload gambar terlebih dahulu");
@@ -17,10 +46,10 @@ async function generateMetadata() {
     }
 
     const hasil =
-    document.getElementById("hasil");
+        document.getElementById("hasil");
 
     hasil.value =
-    `Memproses ${files.length} gambar...\n\n`;
+        `Memproses ${files.length} gambar...\n\n`;
 
     let semuaHasil = [];
 
@@ -28,72 +57,89 @@ async function generateMetadata() {
 
         const file = files[i];
 
-        hasil.value +=
-        `⏳ ${i+1}/${files.length} - ${file.name}\n`;
-
         try {
 
+            hasil.value +=
+                `⏳ ${i + 1}/${files.length} - ${file.name}\n`;
+
             const base64 =
-            await fileToBase64(file);
+                await fileToBase64(file);
 
             const prompt = `
-Analyze this stock image.
+Buat metadata microstock profesional.
 
-Generate:
-1. SEO Title
-2. SEO Description
-3. 49 Stock Keywords
-4. Adobe Stock Category
+Output:
 
-Return plain text.
+JUDUL:
+DESKRIPSI:
+49 KEYWORD:
+KATEGORI:
+
+Gunakan bahasa Inggris.
 `;
 
-            const response =
-            await fetch(
-            `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
-            {
-                method:"POST",
-                headers:{
-                    "Content-Type":"application/json"
-                },
-                body:JSON.stringify({
-                    contents:[
+            let result = "";
+
+            if (provider === "Gemini") {
+
+                const response =
+                    await fetch(
+                        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
                         {
-                            parts:[
-                                {
-                                    text:prompt
-                                },
-                                {
-                                    inline_data:{
-                                        mime_type:file.type,
-                                        data:base64
-                                    }
-                                }
-                            ]
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json"
+                            },
+                            body: JSON.stringify({
+                                contents: [{
+                                    parts: [
+                                        {
+                                            text: prompt
+                                        },
+                                        {
+                                            inline_data: {
+                                                mime_type: file.type,
+                                                data: base64
+                                            }
+                                        }
+                                    ]
+                                }]
+                            })
                         }
-                    ]
-                })
-            });
+                    );
 
-            const data =
-            await response.json();
+                const data =
+                    await response.json();
 
-            const result =
-            data.candidates?.[0]
-            ?.content?.parts?.[0]
-            ?.text ||
-            "Metadata gagal dibuat";
+                if (data.error) {
+                    throw new Error(data.error.message);
+                }
+
+                result =
+                    data.candidates?.[0]
+                        ?.content?.parts?.[0]
+                        ?.text ||
+                    "Tidak ada hasil";
+            }
+
+            else {
+
+                result =
+                    "Provider ini belum diaktifkan.\nGunakan Gemini terlebih dahulu.";
+            }
 
             semuaHasil.push({
-                filename:file.name,
-                metadata:result
+                filename: file.name,
+                metadata: result
             });
 
-        } catch(err){
+        }
+
+        catch (err) {
 
             semuaHasil.push({
-                filename:file.name,
-                metadata:"ERROR"
+                filename: file.name,
+                metadata: "ERROR : " + err.message
             });
         }
     }
@@ -103,7 +149,7 @@ Return plain text.
     semuaHasil.forEach(item => {
 
         hasil.value +=
-`========================
+            `=========================
 FILE : ${item.filename}
 
 ${item.metadata}
@@ -117,6 +163,6 @@ ${item.metadata}
     );
 
     alert(
-    `${files.length} gambar selesai diproses`
+        `${files.length} gambar selesai diproses`
     );
 }
