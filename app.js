@@ -1,36 +1,16 @@
-// =========================
-// SIMPAN API KEY
-// =========================
+const geminiKeyInput = document.getElementById("geminiKey");
+const openaiKeyInput = document.getElementById("openaiKey");
+const groqKeyInput = document.getElementById("groqKey");
 
-const geminiKeyInput =
-document.getElementById("geminiKey");
+const providerSelect = document.getElementById("provider");
+const imageUpload = document.getElementById("imageUpload");
+const generateBtn = document.getElementById("generateBtn");
+const saveApiBtn = document.getElementById("saveApiBtn");
 
-const openaiKeyInput =
-document.getElementById("openaiKey");
-
-const providerSelect =
-document.getElementById("provider");
-
-const imageUpload =
-document.getElementById("imageUpload");
-
-const generateBtn =
-document.getElementById("generateBtn");
-
-const saveApiBtn =
-document.getElementById("saveApiBtn");
-
-const hasil =
-document.getElementById("hasil");
-
-const previewContainer =
-document.getElementById("previewContainer");
-
-const fileCount =
-document.getElementById("fileCount");
-
-const progressBar =
-document.getElementById("progressBar");
+const hasil = document.getElementById("hasil");
+const previewContainer = document.getElementById("previewContainer");
+const fileCount = document.getElementById("fileCount");
+const progressBar = document.getElementById("progressBar");
 
 const tableBody =
 document.querySelector("#metadataTable tbody");
@@ -38,9 +18,9 @@ document.querySelector("#metadataTable tbody");
 let metadataResults = [];
 
 
-// =========================
+// ======================
 // LOAD API KEY
-// =========================
+// ======================
 
 window.onload = () => {
 
@@ -50,12 +30,15 @@ localStorage.getItem("gemini_key") || "";
 openaiKeyInput.value =
 localStorage.getItem("openai_key") || "";
 
+groqKeyInput.value =
+localStorage.getItem("groq_key") || "";
+
 };
 
 
-// =========================
+// ======================
 // SAVE API KEY
-// =========================
+// ======================
 
 saveApiBtn.onclick = () => {
 
@@ -69,14 +52,19 @@ localStorage.setItem(
 openaiKeyInput.value
 );
 
+localStorage.setItem(
+"groq_key",
+groqKeyInput.value
+);
+
 alert("API Key berhasil disimpan");
 
 };
 
 
-// =========================
-// PREVIEW GAMBAR
-// =========================
+// ======================
+// PREVIEW IMAGE
+// ======================
 
 imageUpload.addEventListener(
 "change",
@@ -84,20 +72,17 @@ imageUpload.addEventListener(
 
 previewContainer.innerHTML = "";
 
-const files =
-imageUpload.files;
+const files = imageUpload.files;
 
 fileCount.innerHTML =
-files.length +
-" File Dipilih";
+files.length + " File Dipilih";
 
-for(let file of files){
+for(const file of files){
 
 const img =
 document.createElement("img");
 
-img.className =
-"thumb";
+img.className = "thumb";
 
 img.src =
 URL.createObjectURL(file);
@@ -109,9 +94,9 @@ previewContainer.appendChild(img);
 });
 
 
-// =========================
-// FILE TO BASE64
-// =========================
+// ======================
+// BASE64
+// ======================
 
 function fileToBase64(file){
 
@@ -121,8 +106,7 @@ return new Promise(
 const reader =
 new FileReader();
 
-reader.onload =
-()=>{
+reader.onload = ()=>{
 
 resolve(
 reader.result.split(",")[1]
@@ -130,8 +114,7 @@ reader.result.split(",")[1]
 
 };
 
-reader.onerror =
-reject;
+reader.onerror = reject;
 
 reader.readAsDataURL(file);
 
@@ -140,11 +123,11 @@ reader.readAsDataURL(file);
 }
 
 
-// =========================
+// ======================
 // GEMINI
-// =========================
+// ======================
 
-async function generateGemini(
+async function generateGeminiMetadata(
 file,
 apiKey
 ){
@@ -157,19 +140,13 @@ Analyze this stock image.
 
 Generate:
 
-1. SEO Title
-2. SEO Description
-3. 49 Keywords
-4. Adobe Stock Category
-
-Language: English
-
-Format:
-
 TITLE:
 DESCRIPTION:
-KEYWORDS:
+49 KEYWORDS:
 CATEGORY:
+
+Use English.
+Optimized for Adobe Stock.
 `;
 
 const response =
@@ -181,47 +158,50 @@ headers:{
 "Content-Type":"application/json"
 },
 body:JSON.stringify({
-
-contents:[{
-
+contents:[
+{
 parts:[
-
 {
 text:prompt
 },
-
 {
 inline_data:{
 mime_type:file.type,
 data:base64
 }
 }
-
 ]
-
-}]
-
+}
+]
 })
-
 }
 );
 
 const data =
 await response.json();
 
-return data?.candidates?.[0]
+if(data.error){
+
+throw new Error(
+data.error.message
+);
+
+}
+
+return data.candidates?.[0]
 ?.content?.parts?.[0]
-?.text || "ERROR";
+?.text ||
+"Metadata tidak ditemukan";
 
 }
 
 
-// =========================
+// ======================
 // GENERATE
-// =========================
+// ======================
 
 generateBtn.onclick =
-async () => {
+async ()=>{
 
 const files =
 imageUpload.files;
@@ -236,10 +216,10 @@ return;
 
 }
 
+let apiKey = "";
+
 const provider =
 providerSelect.value;
-
-let apiKey = "";
 
 if(provider==="gemini"){
 
@@ -247,11 +227,19 @@ apiKey =
 geminiKeyInput.value;
 
 }
-
-if(provider==="openai"){
+else if(provider==="openai"){
 
 alert(
-"OpenAI akan ditambahkan setelah Gemini selesai."
+"Sementara gunakan Gemini terlebih dahulu."
+);
+
+return;
+
+}
+else if(provider==="groq"){
+
+alert(
+"Sementara gunakan Gemini terlebih dahulu."
 );
 
 return;
@@ -261,18 +249,17 @@ return;
 if(!apiKey){
 
 alert(
-"Masukkan API Key"
+"Masukkan API Key Gemini"
 );
 
 return;
 
 }
 
-metadataResults = [];
-
+hasil.value = "";
 tableBody.innerHTML = "";
 
-hasil.value = "";
+metadataResults = [];
 
 for(
 let i=0;
@@ -291,31 +278,22 @@ file.name +
 try{
 
 const metadata =
-await generateGemini(
+await generateGeminiMetadata(
 file,
 apiKey
 );
 
 metadataResults.push({
-
-filename:
-file.name,
-
-metadata
-
+filename:file.name,
+metadata:metadata
 });
 
 const row =
 document.createElement("tr");
 
 row.innerHTML = `
-
 <td>${file.name}</td>
-<td>${metadata}</td>
-<td>-</td>
-<td>-</td>
-<td>-</td>
-
+<td colspan="4">${metadata}</td>
 `;
 
 tableBody.appendChild(
@@ -323,22 +301,22 @@ row
 );
 
 hasil.value +=
-"✔ Selesai\n\n";
+"✔ Berhasil\n\n";
 
 }
 catch(err){
 
 hasil.value +=
-"❌ Error : " +
+"❌ " +
 err.message +
 "\n\n";
 
 }
 
 const percent =
-((i+1)/
+((i+1) /
 files.length)
-*100;
+* 100;
 
 progressBar.style.width =
 percent + "%";
@@ -346,26 +324,63 @@ percent + "%";
 }
 
 alert(
-"Semua gambar selesai diproses"
+"Proses selesai"
 );
 
 };
 
 
-// =========================
-// EXPORT ADOBE CSV
-// =========================
+// ======================
+// EXPORT CSV
+// ======================
+
+function downloadCSV(
+content,
+filename
+){
+
+const blob =
+new Blob(
+[content],
+{
+type:"text/csv"
+}
+);
+
+const url =
+URL.createObjectURL(blob);
+
+const a =
+document.createElement("a");
+
+a.href = url;
+a.download = filename;
+
+document.body.appendChild(a);
+
+a.click();
+
+document.body.removeChild(a);
+
+URL.revokeObjectURL(url);
+
+}
+
+
+// ======================
+// ADOBE CSV
+// ======================
 
 document.getElementById(
 "adobeBtn"
-).onclick = () => {
+).onclick = ()=>{
 
 if(
 metadataResults.length===0
 ){
 
 alert(
-"Belum ada metadata"
+"Belum ada data"
 );
 
 return;
@@ -392,20 +407,20 @@ csv,
 };
 
 
-// =========================
-// EXPORT SHUTTERSTOCK
-// =========================
+// ======================
+// SHUTTERSTOCK CSV
+// ======================
 
 document.getElementById(
 "shutterstockBtn"
-).onclick = () => {
+).onclick = ()=>{
 
 if(
 metadataResults.length===0
 ){
 
 alert(
-"Belum ada metadata"
+"Belum ada data"
 );
 
 return;
@@ -432,55 +447,16 @@ csv,
 };
 
 
-// =========================
-// DOWNLOAD CSV
-// =========================
-
-function downloadCSV(
-content,
-filename
-){
-
-const blob =
-new Blob(
-[content],
-{
-type:"text/csv"
-}
-);
-
-const url =
-URL.createObjectURL(
-blob
-);
-
-const a =
-document.createElement("a");
-
-a.href = url;
-
-a.download =
-filename;
-
-a.click();
-
-URL.revokeObjectURL(
-url
-);
-
-}
-
-
-// =========================
+// ======================
 // XLSX
-// =========================
+// ======================
 
 document.getElementById(
 "xlsxBtn"
-).onclick = () => {
+).onclick = ()=>{
 
 alert(
-"Versi XLSX menyusul. Gunakan CSV terlebih dahulu."
+"Gunakan Export CSV terlebih dahulu"
 );
 
 };
