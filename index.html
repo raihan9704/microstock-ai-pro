@@ -24,25 +24,11 @@
 
 <ul class="menu">
 
-<li class="active">
-Dashboard
-</li>
-
-<li>
-Generate Metadata
-</li>
-
-<li>
-Export CSV
-</li>
-
-<li>
-History
-</li>
-
-<li>
-Settings
-</li>
+<li class="active">Dashboard</li>
+<li>Generate Metadata</li>
+<li>Export CSV</li>
+<li>History</li>
+<li>Settings</li>
 
 </ul>
 
@@ -52,9 +38,7 @@ Settings
 
 <header>
 
-<h1>
-Microstock Metadata Generator
-</h1>
+<h1>Microstock Metadata Generator</h1>
 
 <p>
 Adobe Stock • Shutterstock • Freepik
@@ -66,13 +50,9 @@ Adobe Stock • Shutterstock • Freepik
 
 <div class="card">
 
-<h2>
-🤖 AI Provider
-</h2>
+<h2>🤖 AI Provider</h2>
 
-<label>
-Provider
-</label>
+<label>Provider</label>
 
 <select id="provider">
 
@@ -84,27 +64,34 @@ Gemini Vision
 OpenAI Vision
 </option>
 
+<option value="groq">
+Groq Vision
+</option>
+
 </select>
 
 <hr>
 
-<h3>
-Gemini API Key
-</h3>
+<h3>Gemini API Key</h3>
 
 <input
 type="password"
 id="geminiKey"
 placeholder="Masukkan Gemini API Key">
 
-<h3>
-OpenAI API Key
-</h3>
+<h3>OpenAI API Key</h3>
 
 <input
 type="password"
 id="openaiKey"
 placeholder="Masukkan OpenAI API Key">
+
+<h3>Groq API Key</h3>
+
+<input
+type="password"
+id="groqKey"
+placeholder="Masukkan Groq API Key">
 
 <button id="saveApiBtn">
 Simpan API Key
@@ -114,9 +101,7 @@ Simpan API Key
 
 <div class="card">
 
-<h2>
-📂 Upload Gambar
-</h2>
+<h2>📂 Upload Gambar</h2>
 
 <p>
 Pilih banyak gambar sekaligus
@@ -133,7 +118,9 @@ accept="image/*">
 </div>
 
 <div class="progress-wrap">
+
 <div id="progressBar"></div>
+
 </div>
 
 <button id="generateBtn">
@@ -144,20 +131,15 @@ Generate Metadata
 
 <div class="card full">
 
-<h2>
-🖼 Preview Thumbnail
-</h2>
+<h2>🖼 Preview Thumbnail</h2>
 
-<div id="previewContainer">
-</div>
+<div id="previewContainer"></div>
 
 </div>
 
 <div class="card full">
 
-<h2>
-📊 Metadata Table
-</h2>
+<h2>📊 Metadata Table</h2>
 
 <div class="table-wrap">
 
@@ -189,9 +171,7 @@ Generate Metadata
 
 <div class="card full">
 
-<h2>
-⬇ Export
-</h2>
+<h2>⬇ Export</h2>
 
 <div class="export-buttons">
 
@@ -213,14 +193,11 @@ Excel XLSX
 
 <div class="card full">
 
-<h2>
-📄 Log
-</h2>
+<h2>📄 Log</h2>
 
 <textarea
 id="hasil"
-readonly>
-</textarea>
+readonly></textarea>
 
 </div>
 
