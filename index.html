@@ -1,92 +1,120 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Microstock AI Pro</title>
-    <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Microstock AI Pro</title>
+<link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
 <header>
-    <h1>🚀 Microstock AI Pro</h1>
-    <p>Generator Metadata Adobe Stock & Shutterstock</p>
+<h1>🚀 Microstock AI Pro</h1>
+<p>Generator Metadata Adobe Stock & Shutterstock</p>
 </header>
 
 <div class="container">
 
-    <div class="card">
-        <h2>🤖 AI Provider</h2>
+<div class="card">
+<h2>🤖 AI Provider</h2>
 
-        <select id="provider">
-            <option>Gemini</option>
-            <option>Groq</option>
-            <option>OpenAI</option>
-        </select>
+<select id="provider">
+<option value="gemini">Gemini</option>
+</select>
 
-        <input type="password" id="apikey" placeholder="Masukkan API Key">
+<input
+type="password"
+id="apikey"
+placeholder="Masukkan API Key Gemini">
 
-        <button onclick="simpanApi()">Simpan API Key</button>
-    </div>
+<button onclick="simpanApi()">
+Simpan API Key
+</button>
+</div>
 
-    <div class="card">
-        <h2>📁 Upload File</h2>
+<div class="card">
+<h2>📁 Upload Gambar Tanpa Batas</h2>
 
-        <input type="file" multiple accept="image/*">
+<p>Pilih satu atau banyak gambar sekaligus</p>
 
-        <input type="file" accept=".zip">
+<input
+type="file"
+id="imageUpload"
+multiple
+accept="image/*">
 
-        <input type="file" accept=".csv">
-    </div>
+<div id="preview"></div>
 
-    <div class="card">
-        <h2>⚙️ Pengaturan Metadata</h2>
+</div>
 
-        <label>
-            <input type="checkbox" checked>
-            Judul
-        </label>
+<div class="card">
+<h2>⚙️ Pengaturan Metadata</h2>
 
-        <label>
-            <input type="checkbox" checked>
-            Deskripsi
-        </label>
+<label>
+<input type="checkbox" checked>
+Judul
+</label>
 
-        <label>
-            <input type="checkbox" checked>
-            49 Keyword
-        </label>
+<br><br>
 
-        <label>
-            <input type="checkbox" checked>
-            Kategori
-        </label>
+<label>
+<input type="checkbox" checked>
+Deskripsi
+</label>
 
-        <br><br>
+<br><br>
 
-        <select id="bahasa">
-            <option>English</option>
-            <option>Indonesia</option>
-        </select>
-    </div>
+<label>
+<input type="checkbox" checked>
+49 Keyword
+</label>
 
-    <div class="card">
-        <h2>📊 Hasil Metadata</h2>
+<br><br>
 
-        <textarea id="hasil" rows="12"></textarea>
+<label>
+<input type="checkbox" checked>
+Kategori
+</label>
 
-        <button>Generate Metadata</button>
-    </div>
+<br><br>
 
-    <div class="card">
-        <h2>⬇️ Export</h2>
+<select id="bahasa">
+<option>English</option>
+<option>Indonesia</option>
+</select>
 
-        <button>Adobe Stock CSV</button>
+</div>
 
-        <button>Shutterstock CSV</button>
+<div class="card">
+<h2>📊 Hasil Metadata</h2>
 
-        <button>Excel XLSX</button>
-    </div>
+<textarea
+id="hasil"
+rows="14"></textarea>
+
+<button onclick="generateMetadata()">
+Generate Metadata
+</button>
+
+</div>
+
+<div class="card">
+<h2>⬇️ Export</h2>
+
+<button id="adobeBtn">
+Adobe Stock CSV
+</button>
+
+<button id="shutterstockBtn">
+Shutterstock CSV
+</button>
+
+<button id="excelBtn">
+Excel XLSX
+</button>
+
+</div>
 
 </div>
 
