@@ -1,10 +1,96 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
-<title>Microstock AI Pro</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Microstock AI Pro</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<h1>Microstock AI Pro</h1>
-<p>Website berhasil online 🚀</p>
+
+<header>
+    <h1>🚀 Microstock AI Pro</h1>
+    <p>Generator Metadata Adobe Stock & Shutterstock</p>
+</header>
+
+<div class="container">
+
+    <div class="card">
+        <h2>🤖 AI Provider</h2>
+
+        <select id="provider">
+            <option>Gemini</option>
+            <option>Groq</option>
+            <option>OpenAI</option>
+        </select>
+
+        <input type="password" id="apikey" placeholder="Masukkan API Key">
+
+        <button onclick="simpanApi()">Simpan API Key</button>
+    </div>
+
+    <div class="card">
+        <h2>📁 Upload File</h2>
+
+        <input type="file" multiple accept="image/*">
+
+        <input type="file" accept=".zip">
+
+        <input type="file" accept=".csv">
+    </div>
+
+    <div class="card">
+        <h2>⚙️ Pengaturan Metadata</h2>
+
+        <label>
+            <input type="checkbox" checked>
+            Judul
+        </label>
+
+        <label>
+            <input type="checkbox" checked>
+            Deskripsi
+        </label>
+
+        <label>
+            <input type="checkbox" checked>
+            49 Keyword
+        </label>
+
+        <label>
+            <input type="checkbox" checked>
+            Kategori
+        </label>
+
+        <br><br>
+
+        <select id="bahasa">
+            <option>English</option>
+            <option>Indonesia</option>
+        </select>
+    </div>
+
+    <div class="card">
+        <h2>📊 Hasil Metadata</h2>
+
+        <textarea id="hasil" rows="12"></textarea>
+
+        <button>Generate Metadata</button>
+    </div>
+
+    <div class="card">
+        <h2>⬇️ Export</h2>
+
+        <button>Adobe Stock CSV</button>
+
+        <button>Shutterstock CSV</button>
+
+        <button>Excel XLSX</button>
+    </div>
+
+</div>
+
+<script src="app.js"></script>
+
 </body>
 </html>
